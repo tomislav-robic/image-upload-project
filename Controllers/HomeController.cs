@@ -78,6 +78,8 @@ namespace Image_upload_project.Controllers
 
             model.FileName = fileName;
             model.LocalFilePath = localImagePath;
+            model.Timestamp = DateTime.Now;
+            model.ImageSize = file.Length;
 
             _imageRepository.CreateNewImage(model, userId);
             

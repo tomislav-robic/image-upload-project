@@ -20,9 +20,9 @@ namespace Image_upload_project.Repositories
             {
                 connection.Open();
                 connection.Execute(
-                    @"INSERT INTO dbo.Image (UserId, FileName, LocalFilePath, Tags, Description)
-                    VALUES(@userId, @FileName, @LocalFilePath, @Tags, @Description)",
-                    new {userId, image.FileName, image.LocalFilePath, image.Tags, image.Description});
+                    @"INSERT INTO dbo.Image (UserId, FileName, LocalFilePath, Tags, Description, Timestamp, ImageSize)
+                    VALUES(@userId, @FileName, @LocalFilePath, @Tags, @Description, @Timestamp, @ImageSize)",
+                    new {userId, image.FileName, image.LocalFilePath, image.Tags, image.Description, image.Timestamp, image.ImageSize});
             }
         }
     }
