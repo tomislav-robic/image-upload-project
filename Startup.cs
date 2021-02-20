@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Image_upload_project.Data;
+using Image_upload_project.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,8 +33,18 @@ namespace Image_upload_project
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            var databaseSettings = new DatabaseSettings(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddSingleton(databaseSettings);
+            RegisterRepositories(services);
+            
             services.AddControllersWithViews();
             services.AddRazorPages();
+        }
+
+        private void RegisterRepositories(IServiceCollection services)
+        {
+            services.AddScoped<IImageRepository, ImageRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

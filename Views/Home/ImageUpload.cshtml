@@ -1,0 +1,37 @@
+@model ImageUploadModel
+
+@{
+    ViewData["Title"] = "Image upload";
+    Layout = "_Layout";
+}
+
+<h1>Upload an image to your repository</h1>
+
+@if (ViewBag.Error != null)
+{
+    <p class="alert-danger">@ViewBag.Error</p>
+}
+@using (Html.BeginForm("ImageUploadPost", "Home", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+    <dl>
+        <dt>
+            <label>Browse...</label>
+        </dt>
+        <dd>
+            <input class="form-control-file" type="file" name="file" accept="image/*"/>
+        </dd>
+        <dt>
+            <label>Tags (write them as comma-delimited words)</label>
+        </dt>
+        <dd>
+            @Html.EditorFor(model => model.Tags, new {htmlAttributes = new {@class = ""}})
+        </dd>
+        <dt>
+            <label>Description</label>
+        </dt>
+        <dd>
+            @Html.EditorFor(model => model.Description, new {htmlAttributes = new {@class = ""}})
+        </dd>
+    </dl>
+    <input class="btn btn-light" type="submit" value="Upload"/>
+}   
