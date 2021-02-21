@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Image_upload_project.Data;
+using Image_upload_project.Models.Image;
 using Image_upload_project.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +46,7 @@ namespace Image_upload_project
         private void RegisterRepositories(IServiceCollection services)
         {
             services.AddScoped<IImageRepository, ImageRepository>();
+            services.AddSingleton<ImageBuilderFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

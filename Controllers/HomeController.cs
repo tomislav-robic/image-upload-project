@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Image_upload_project.Models;
+using Image_upload_project.Models.Image;
 using Image_upload_project.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,11 +20,13 @@ namespace Image_upload_project.Controllers
         
         private readonly ILogger<HomeController> _logger;
         private readonly IImageRepository _imageRepository;
+        private readonly ImageBuilderFactory _imageBuilderFactory;
 
-        public HomeController(ILogger<HomeController> logger, IImageRepository imageRepository)
+        public HomeController(ILogger<HomeController> logger, IImageRepository imageRepository, ImageBuilderFactory imageBuilderFactory)
         {
             _logger = logger;
             _imageRepository = imageRepository;
+            _imageBuilderFactory = imageBuilderFactory;
         }
 
         public IActionResult Index()
@@ -47,12 +50,12 @@ namespace Image_upload_project.Controllers
         [Authorize]
         public IActionResult ImageUpload()
         {
-            return View(new ImageUploadModel());
+            return View(new ImageUploadViewModel());
         }
         
         [Authorize]
         [HttpPost]
-        public IActionResult ImageUploadPost(ImageUploadModel model, IFormFile file)
+        public IActionResult ImageUploadPost(ImageUploadViewModel viewModel, IFormFile file)
         {
             var fileName = Path.GetFileName(file.FileName);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -68,7 +71,7 @@ namespace Image_upload_project.Controllers
             if (System.IO.File.Exists(localImagePath))
             {
                 ViewBag.Error = "An image with the same name has already been uploaded.";
-                return View("ImageUpload", model);
+                return View("ImageUpload", viewModel);
             }
 
             using (var fileStream = new FileStream(localImagePath, FileMode.CreateNew))
@@ -76,12 +79,29 @@ namespace Image_upload_project.Controllers
                 file.CopyTo(fileStream);
             }
 
-            model.FileName = fileName;
-            model.LocalFilePath = localImagePath;
-            model.Timestamp = DateTime.Now;
-            model.ImageSize = file.Length;
+            var imageBuilder = _imageBuilderFactory.CreateImageBuilder();
+            imageBuilder.SetBaseImageInfo(fileName, localImagePath, file.OpenReadStream());
+            imageBuilder.AssignUser(userId);
+            if (!string.IsNullOrEmpty(viewModel.Tags))
+            {
+                imageBuilder.AddTags(viewModel.Tags);
+            }
+            if (!string.IsNullOrEmpty(viewModel.Description))
+            {
+                imageBuilder.AddDescription(viewModel.Description);
+            }
+            if (viewModel.ResizePercentage < 1)
+            {
+                imageBuilder.Resize(viewModel.ResizePercentage);
+            }
 
-            _imageRepository.CreateNewImage(model, userId);
+            if (viewModel.ClearExifData)
+            {
+                imageBuilder.RemoveExifData();
+            }
+
+            var imageModel = imageBuilder.Build();
+            _imageRepository.CreateNewImage(imageModel);
             
             return RedirectToAction("Index");
         }
