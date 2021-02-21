@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Dapper;
 using Image_upload_project.Models;
 using Image_upload_project.Models.Image;
@@ -24,6 +26,16 @@ namespace Image_upload_project.Repositories
                     @"INSERT INTO dbo.Image (UserId, FileName, LocalFilePath, Tags, Description, Timestamp, ImageSize)
                     VALUES(@UserId, @FileName, @LocalFilePath, @Tags, @Description, @Timestamp, @ImageSize)",
                     new {image.UserId, image.FileName, image.LocalFilePath, image.Tags, image.Description, image.Timestamp, image.ImageSize});
+            }
+        }
+
+        public List<ImageViewModel> GetImages()
+        {
+            using (var connection = new SqlConnection(_dbSettings.ConnectionString))
+            {
+                connection.Open();
+                return connection.Query<ImageViewModel>(
+                    "SELECT Id, FileName, '/userImages/'+UserId+'/'+FileName AS RelativePath FROM dbo.Image ORDER BY FileName").ToList();
             }
         }
     }

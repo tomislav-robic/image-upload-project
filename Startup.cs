@@ -13,6 +13,7 @@ using Image_upload_project.Models.Image;
 using Image_upload_project.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 
 namespace Image_upload_project
@@ -72,7 +73,15 @@ namespace Image_upload_project
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+            //give access to everything in wwwroot
             app.UseStaticFiles();
+            //map our image storage location to a relative route to enable displaying them on the site
+            var imageRepositoryPath = Configuration.GetValue<string>("ImageRepositoryPath");
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(imageRepositoryPath),
+                RequestPath = "/userImages"
+            });
 
             app.UseRouting();
 

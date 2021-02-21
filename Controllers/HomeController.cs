@@ -19,14 +19,18 @@ namespace Image_upload_project.Controllers
     {
         
         private readonly ILogger<HomeController> _logger;
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IImageRepository _imageRepository;
+
+        public HomeController(ILogger<HomeController> logger, IImageRepository imageRepository)
         {
             _logger = logger;
+            _imageRepository = imageRepository;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var images = _imageRepository.GetImages();
+            return View(images);
         }
 
         public IActionResult Privacy()

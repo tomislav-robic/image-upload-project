@@ -1,6 +1,4 @@
-using System;
-
-namespace Image_upload_project.Models
+namespace Image_upload_project.Models.Image
 {
     public class ImageUploadViewModel
     {

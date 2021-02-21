@@ -1,10 +1,38 @@
-﻿@{
+﻿@model List<Image_upload_project.Models.Image.ImageViewModel>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     
-    @Html.ActionLink("Upload an image","ImageUpload", "Images")
+@if (Model.Count == 0)
+{
+    <p>There are no images currently in the repository. Sign in and be the first to upload an image!</p>
+}
+else
+{
+    <div class="container">
+        @for (int r = 1; r <= Model.Count / 5 + 1; r++)
+        {
+            <div class="row">
+                @for (int c = 1; c <= 5; c++)
+                {
+                    var index = (r - 1) * 5 + c - 1;
+                    if (index < Model.Count)
+                    {
+                        <div class="col">
+                            <img src="@Url.Content(Model[index].RelativePath)" width="200px" height="200px" style="object-fit: scale-down" alt="@Model[index].FileName"/>
+                            <div>@Html.ActionLink(Model[index].FileName, "Details", "Images", new {id = Model[index].Id})</div>
+                        </div>
+                    }
+                }
+            </div>   
+        }
+    </div>
+}
+
+
+    <img />
 </div>
