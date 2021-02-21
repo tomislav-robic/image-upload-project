@@ -11,7 +11,7 @@
 {
     <p class="alert-danger">@ViewBag.Error</p>
 }
-@using (Html.BeginForm("ImageUploadPost", "Home", FormMethod.Post, new {enctype = "multipart/form-data"}))
+@using (Html.BeginForm("ImageUploadPost", "Images", FormMethod.Post, new {enctype = "multipart/form-data"}))
 {
     <dl>
         <dt>

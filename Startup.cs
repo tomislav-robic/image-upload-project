@@ -35,17 +35,25 @@ namespace Image_upload_project
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            var databaseSettings = new DatabaseSettings(Configuration.GetConnectionString("DefaultConnection"));
-            services.AddSingleton(databaseSettings);
-            RegisterRepositories(services);
+
+            RegisterCustomDependencies(services);
             
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
 
-        private void RegisterRepositories(IServiceCollection services)
+        private void RegisterCustomDependencies(IServiceCollection services)
         {
+            //settings
+            var databaseSettings = new DatabaseSettings(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddSingleton(databaseSettings);
+            var imageStorageSettings = new ImageStorageSettings();
+            imageStorageSettings.ImageRepositoryPath = Configuration.GetValue<string>("ImageRepositoryPath");
+            services.AddSingleton(imageStorageSettings);
+            //repositories
             services.AddScoped<IImageRepository, ImageRepository>();
+            
+            //other
             services.AddSingleton<ImageBuilderFactory>();
         }
 
