@@ -5,21 +5,21 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Image_upload_project.Models.Image
 {
-    public class ImageModel
+    public class ImageModel : IDisposable
     {
-        public string UserId { get; private set; }
+        public string UserId { get; internal set; }
         
-        public string Tags { get; private set; }
-        public string Description { get; private set; }
+        public string Tags { get; internal set; }
+        public string Description { get; internal set; }
         
-        public string FileName { get; private set; }
-        public string LocalFilePath { get; private set; }
+        public string FileName { get; internal set; }
+        public string LocalFilePath { get; internal set; }
         
-        public DateTime Timestamp { get; private set; }
+        public DateTime Timestamp { get; internal set; }
 
-        public long ImageSize { get; private set; }
+        public long ImageSize { get; internal set; }
 
-        public Stream ImageStream { get; private set; }
+        public Stream ImageStream { get; internal set; }
 
         public void WriteToLocalFilePath()
         {
@@ -27,6 +27,11 @@ namespace Image_upload_project.Models.Image
             {
                 ImageStream.CopyTo(fileStream);
             }
+        }
+
+        public void Dispose()
+        {
+            ImageStream?.Dispose();
         }
     }
 

@@ -4,7 +4,7 @@ namespace Image_upload_project.Models.Image
 {
     public interface IImageBuilder
     {
-        void SetBaseImageInfo(string filename, string localFilePath, Stream inputStream);
+        void SetBaseImageInfo(string fileName, string localFilePath, Stream inputStream);
 
         void AddTags(string tags);
 

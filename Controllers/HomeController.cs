@@ -100,9 +100,12 @@ namespace Image_upload_project.Controllers
                 imageBuilder.RemoveExifData();
             }
 
-            var imageModel = imageBuilder.Build();
-            _imageRepository.CreateNewImage(imageModel);
-            
+            using (var imageModel = imageBuilder.Build())
+            {
+                imageModel.WriteToLocalFilePath();
+                _imageRepository.CreateNewImage(imageModel);
+            }
+
             return RedirectToAction("Index");
         }
     }
