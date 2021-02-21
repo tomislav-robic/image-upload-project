@@ -15,23 +15,42 @@
 {
     <dl>
         <dt>
-            <label>Browse...</label>
+            @Html.Label("Choose an image")
         </dt>
         <dd>
             <input class="form-control-file" type="file" name="file" accept="image/*"/>
         </dd>
         <dt>
-            <label>Tags (write them as comma-delimited words)</label>
+            @Html.LabelFor(m => m.Tags, "Tags (write them as comma-delimited words)")
         </dt>
         <dd>
-            @Html.EditorFor(model => model.Tags, new {htmlAttributes = new {@class = ""}})
+            @Html.EditorFor(m => m.Tags, new {htmlAttributes = new {@class = ""}})
         </dd>
         <dt>
-            <label>Description</label>
+            @Html.LabelFor(m=> m.Description, "Description")
         </dt>
         <dd>
-            @Html.EditorFor(model => model.Description, new {htmlAttributes = new {@class = ""}})
+            <textarea rows="5" cols="60" id="Description" name="Description" type="text" >@Model.Description</textarea>
         </dd>
+        <dt>
+            @Html.LabelFor(m => m.ResizePercentage, "Image size")
+        </dt>
+        <dd>
+            100% : @Html.RadioButtonFor(m => m.ResizePercentage, 1, new { @checked = "true"})
+        </dd>
+        <dd>
+            75% : @Html.RadioButtonFor(m => m.ResizePercentage, 0.75f)
+        </dd>
+        <dd>
+            50% : @Html.RadioButtonFor(m => m.ResizePercentage, 0.5f)
+        </dd>
+        <dd>
+            25% : @Html.RadioButtonFor(m => m.ResizePercentage, 0.25f)
+        </dd>
+        <dt>
+            @Html.LabelFor(m => m.ClearExifData, "Clear EXIF data?")
+            @Html.EditorFor(m => m.ClearExifData)
+        </dt>
     </dl>
     <input class="btn btn-light" type="submit" value="Upload"/>
 }   

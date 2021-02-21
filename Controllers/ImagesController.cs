@@ -49,12 +49,7 @@ namespace Image_upload_project.Controllers
                 ViewBag.Error = "An image with the same name has already been uploaded.";
                 return View("ImageUpload", viewModel);
             }
-
-            using (var fileStream = new FileStream(localImagePath, FileMode.CreateNew))
-            {
-                file.CopyTo(fileStream);
-            }
-
+            
             var imageBuilder = _imageBuilderFactory.CreateImageBuilder();
             imageBuilder.SetBaseImageInfo(fileName, localImagePath, file.OpenReadStream());
             imageBuilder.AssignUser(userId);

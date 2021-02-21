@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account.Manage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
@@ -60,6 +61,8 @@ namespace Image_upload_project.Models.Image
 
         public void RemoveExifData()
         {
+            if(_image.Metadata.ExifProfile == null)
+                return;
             foreach (var exifValue in _image.Metadata.ExifProfile.Values)
             {
                 _image.Metadata.ExifProfile.RemoveValue(exifValue.Tag);
@@ -75,6 +78,7 @@ namespace Image_upload_project.Models.Image
 
             _model.ImageStream = new MemoryStream();
             _image.Save(_model.ImageStream, _image.DetectEncoder(_model.LocalFilePath));
+            _model.ImageStream.Seek(0, SeekOrigin.Begin);
             _model.Timestamp = DateTime.Now;
             _model.ImageSize = _model.ImageStream.Length;
 
