@@ -79,5 +79,22 @@ namespace Image_upload_project.Controllers
 
             return RedirectToAction("Index","Home");
         }
+
+        public IActionResult Details([FromRoute] int id)
+        {
+            var imageDetails = _imageRepository.GetImage(id);
+            ViewBag.CanEdit = false;
+            
+            var userId = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                if (userId == imageDetails.UserId)
+                {
+                    ViewBag.CanEdit = true;
+                }
+            }
+            
+            return View(imageDetails);
+        }
     }
 }

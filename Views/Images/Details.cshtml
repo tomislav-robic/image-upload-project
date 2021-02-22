@@ -1,0 +1,57 @@
+@model Image_upload_project.Models.Image.ImageDetails
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "_Layout";
+}
+
+<h2>Details</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <label>Image name:</label>
+        </div>
+        <div class="col-md-6">
+            <p>@Model.FileName</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label>Submitted by:</label>
+        </div>
+        <div class="col-md-6">
+            <p>@Model.UserName</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label>Date of submission</label>
+        </div>
+        <div class="col-md-6">
+            <p>@Model.Timestamp.ToString("dd.MM.yyyy. HH:mm:ss")</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label>Tags</label>
+        </div>
+        <div class="col-md-6">
+            <p>@(string.IsNullOrEmpty(Model.Tags) ? "-- none --" : Model.Tags.Substring(0, Model.Tags.Length-2).Replace("#"," #"))</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label>Description</label>
+        </div>
+        <div class="col-md-6">
+            <p>@Model.Description</p>
+        </div>
+    </div>
+    @if (ViewBag.CanEdit)
+    {
+    <div class="row">
+         @Html.ActionLink("Edit details","Edit", new {id=Model.Id}, new { @class = "btn btn-primary"})
+     </div>
+    }
+    <img src="@Url.Content(Model.RelativePath)" alt="@Model.FileName"/>
+</div>

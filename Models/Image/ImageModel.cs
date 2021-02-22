@@ -13,12 +13,11 @@ namespace Image_upload_project.Models.Image
         public string Description { get; internal set; }
         
         public string FileName { get; internal set; }
-        public string LocalFilePath { get; internal set; }
-        
+
         public DateTime Timestamp { get; internal set; }
 
         public long ImageSize { get; internal set; }
-
+        public string LocalFilePath { get; internal set; }
         public Stream ImageStream { get; internal set; }
 
         public void WriteToLocalFilePath()

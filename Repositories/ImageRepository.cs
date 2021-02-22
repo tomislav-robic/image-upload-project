@@ -21,11 +21,21 @@ namespace Image_upload_project.Repositories
 
         public void CreateNewImage(ImageModel image)
         {
-            //sanitize hastags - remove spaces and add a trailing hashtag for filtering
-            image.Tags = image.Tags.Replace(" ", "");
-            if (image.Tags[image.Tags.Length - 1] != '#')
-                image.Tags += "#";
-            
+            //sanitize hastags - remove spaces, ensure leading hastag and add a trailing hashtag for filtering
+            image.Tags = image.Tags?.Replace(" ", "");
+            if (!string.IsNullOrEmpty(image.Tags))
+            {
+                if (image.Tags[0] != '#')
+                {
+                    image.Tags = $"#{image.Tags}";
+                }
+
+                if (image.Tags[image.Tags.Length - 1] != '#')
+                {
+                    image.Tags += "#";
+                }
+            }
+
             using (var connection = new SqlConnection(_dbSettings.ConnectionString))
             {
                 connection.Open();
@@ -63,6 +73,19 @@ namespace Image_upload_project.Repositories
             {
                 connection.Open();
                 return connection.Query<ImageViewModel>(query, parameters).ToList();
+            }
+        }
+
+        public ImageDetails GetImage(int imageId)
+        {
+            using (var connection = new SqlConnection(_dbSettings.ConnectionString))
+            {
+                connection.Open();
+                return connection.QuerySingle<ImageDetails>(
+                    @"SELECT i.Id, i.UserId, i.FileName, i.Tags, i.Description, i.Timestamp, i.ImageSize, u.UserName
+                        FROM dbo.Image i
+                        JOIN dbo.AspNetUsers u ON i.UserId = u.Id
+                        WHERE i.Id = @imageId", new {imageId});
             }
         }
     }
