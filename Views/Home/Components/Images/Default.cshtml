@@ -1,0 +1,41 @@
+@model List<Image_upload_project.Models.Image.ImageViewModel>
+
+@if (Model.Count == 0)
+{
+    <p>No images were found.</p>
+}
+else
+{
+    <div class="album py-5 bg-light">
+        <div class="container">
+            @*show image previews in a 5-column grid*@
+            @for (int r = 1; r <= Model.Count / 5 + 1; r++)
+            {
+                <div class="row">
+                    @for (int c = 1; c <= 5; c++)
+                    {
+                        var index = (r - 1) * 5 + c - 1;
+                        if (index < Model.Count)
+                        {
+                            <div class="col-md-4">
+                                <div class="card mb-4 box-shadow">
+                                    <img src="@Url.Content(Model[index].RelativePath)" width="200px" height="200px" style="object-fit: scale-down" class="card-img-top" alt="@Model[index].FileName"/>
+                                    <div class="card-body">
+                                        <p class="card-text">@Model[index].FileName</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="btn-group">
+                                                @Html.ActionLink("Details", "Details", "Images", new {id = Model[index].Id}, new {@class = "btn btn-sm btn-outline-secondary"})
+                                            </div>
+                                            <small class="text-muted">@Model[index].Timestamp.ToString("dd. MM. yyyy. HH:mm:ss")</small>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}

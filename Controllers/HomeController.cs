@@ -29,8 +29,14 @@ namespace Image_upload_project.Controllers
 
         public IActionResult Index()
         {
-            var images = _imageRepository.GetImages();
-            return View(images);
+            var model = new ImageSearchModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Search(ImageSearchModel model)
+        {
+            return View("Index", model);
         }
 
         public IActionResult Privacy()

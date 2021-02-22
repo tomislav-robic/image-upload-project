@@ -21,7 +21,7 @@
             <input class="form-control-file" type="file" name="file" accept="image/*"/>
         </dd>
         <dt>
-            @Html.LabelFor(m => m.Tags, "Tags (write them as comma-delimited words)")
+            @Html.LabelFor(m => m.Tags, "Hashtags (write them as words beginning with a # character)")
         </dt>
         <dd>
             @Html.EditorFor(m => m.Tags, new {htmlAttributes = new {@class = ""}})
