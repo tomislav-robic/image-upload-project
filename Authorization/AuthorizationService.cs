@@ -17,7 +17,7 @@ namespace Image_upload_project.Authorization
 
         public bool CanUserEditImage(ClaimsPrincipal user, int imageId)
         {
-            if (user.IsInRole(AuthorizationUtilities.Roles.Admin))
+            if (AuthorizationUtilities.Instance.UserIsInRole(user, AuthorizationUtilities.Roles.Admin))
             {
                 return true;
             }
@@ -36,12 +36,12 @@ namespace Image_upload_project.Authorization
         public bool CanUserEditImage(ClaimsPrincipal user, string imageUserId)
         {
             var userId = AuthorizationUtilities.Instance.GetUserId(user);
-            return userId == imageUserId || user.IsInRole(AuthorizationUtilities.Roles.Admin);
+            return userId == imageUserId || AuthorizationUtilities.Instance.UserIsInRole(user, AuthorizationUtilities.Roles.Admin);
         }
 
         public bool IsImageSizeOverUserLimit(long imageSize, ClaimsPrincipal user)
         {
-            if (user.IsInRole(AuthorizationUtilities.Roles.Admin))
+            if (AuthorizationUtilities.Instance.UserIsInRole(user, AuthorizationUtilities.Roles.Admin))
             {
                 return false;
             }

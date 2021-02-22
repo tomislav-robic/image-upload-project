@@ -36,11 +36,11 @@ namespace Image_upload_project.Authorization
 
         public long UserByteLimit(ClaimsPrincipal user)
         {
-            if (user.IsInRole(Roles.Admin))
+            if (UserIsInRole(user, Roles.Admin))
                 return long.MaxValue;
-            if (user.IsInRole(Roles.Gold))
+            if (UserIsInRole(user,Roles.Gold))
                 return _settings.GoldUserStorageLimit;
-            if (user.IsInRole(Roles.Pro))
+            if (UserIsInRole(user,Roles.Pro))
                 return _settings.ProUserStorageLimit;
 
             return _settings.FreeUserStorageLimit;
@@ -49,6 +49,12 @@ namespace Image_upload_project.Authorization
         public string GetUserId(ClaimsPrincipal user)
         {
             return user?.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        public bool UserIsInRole(ClaimsPrincipal user, string role)
+        {
+            //return user.IsInRole(role);
+            return user.Identity.Name.StartsWith(role.ToLower());
         }
     }
 }
