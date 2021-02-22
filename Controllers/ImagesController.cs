@@ -1,5 +1,6 @@
 using System.IO;
 using System.Security.Claims;
+using Image_upload_project.Authorization;
 using Image_upload_project.Models;
 using Image_upload_project.Models.Image;
 using Image_upload_project.Repositories;
@@ -103,6 +104,41 @@ namespace Image_upload_project.Controllers
             }
             
             return View(imageDetails);
+        }
+
+        [Authorize]
+        public IActionResult Edit([FromRoute] int id)
+        {
+            if (!_authService.CanUserEditImage(User, id))
+            {
+                ViewBag.Error = "Your account is not authorized to edit the requested image.";
+                ViewBag.CanEdit = false;
+                return View(new ImageEditModel());
+            }
+
+            ViewBag.CanEdit = true;
+            var imageDetails = _imageRepository.GetImage(id);
+            return View(new ImageEditModel()
+            {
+                Id = imageDetails.Id,
+                Description = imageDetails.Description,
+                Tags = imageDetails.Tags.Substring(0, imageDetails.Tags.Length-1).Replace("#"," #").Substring(1)
+            });
+        }
+        
+        [Authorize]
+        [HttpPost]
+        public IActionResult EditPost(ImageEditModel model, [FromRoute] int id)
+        {
+            if (!_authService.CanUserEditImage(User, id))
+            {
+                ViewBag.Error = "Your account is not authorized to edit the requested image.";
+                ViewBag.CanEdit = false;
+                return View("Edit", model);
+            }
+
+            _imageRepository.EditImageProperties(id, model);
+            return RedirectToAction("Details", new {id});
         }
     }
 }

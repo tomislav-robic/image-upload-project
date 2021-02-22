@@ -96,5 +96,18 @@ namespace Image_upload_project.Repositories
                         WHERE i.Id = @imageId", new {imageId});
             }
         }
+
+        public void EditImageProperties(int imageId, ImageEditModel model)
+        {
+            var tags = SanitizeHashtags(model.Tags);
+            using (var connection = new SqlConnection(_dbSettings.ConnectionString))
+            {
+                connection.Open();
+                connection.Execute(
+                    @"UPDATE dbo.Image 
+                        SET Tags = @tags, Description = @Description
+                        WHERE Id = @imageId", new {imageId, tags, model.Description});
+            }
+        }
     }
 }

@@ -1,0 +1,33 @@
+@model Image_upload_project.Models.Image.ImageEditModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "_Layout";
+}
+@if (ViewBag.Error != null)
+{
+    <p class="alert-danger">@ViewBag.Error</p>
+}
+@if(ViewBag.CanEdit)
+{
+    <h2>Edit image data</h2>
+    using (Html.BeginForm("EditPost", "Images", new { Model.Id}))
+    {
+        <dl>
+            <dt>
+                @Html.LabelFor(m => m.Tags, "Hashtags (write them as words beginning with a # character)")
+            </dt>
+            <dd>
+                @Html.EditorFor(m => m.Tags, new {htmlAttributes = new {@class = ""}})
+            </dd>
+            <dt>
+                @Html.LabelFor(m => m.Description, "Description")
+            </dt>
+            <dd>
+                <textarea rows="5" cols="60" id="Description" name="Description" type="text" >@Model.Description</textarea>
+            </dd>
+        </dl>
+        <input class="btn btn-primary" type="submit" value="Submit changes"/>
+    }
+    
+}

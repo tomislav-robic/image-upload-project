@@ -11,5 +11,6 @@ namespace Image_upload_project.Repositories
         List<ImageViewModel> GetImages(string tags = null, DateTime? dateFrom = null, DateTime? dateTo = null);
 
         ImageDetails GetImage(int imageId);
+        void EditImageProperties(int imageId, ImageEditModel model);
     }
 }
