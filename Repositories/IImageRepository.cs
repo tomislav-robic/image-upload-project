@@ -7,7 +7,7 @@ namespace Image_upload_project.Repositories
 {
     public interface IImageRepository
     {
-        void CreateNewImage(ImageModel image);
+        int CreateNewImage(ImageModel image);
         List<ImageViewModel> GetImages(string tags = null, DateTime? dateFrom = null, DateTime? dateTo = null);
 
         ImageDetails GetImage(int imageId);

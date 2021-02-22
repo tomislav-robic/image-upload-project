@@ -12,12 +12,14 @@ namespace Image_upload_project.Controllers
     public class ImagesController : Controller
     {
         private readonly IImageRepository _imageRepository;
+        private readonly AuthorizationService _authService;
         private readonly ImageBuilderFactory _imageBuilderFactory;
         private readonly ImageStorageSettings _settings;
 
-        public ImagesController(IImageRepository imageRepository, ImageBuilderFactory imageBuilderFactory, ImageStorageSettings settings)
+        public ImagesController(IImageRepository imageRepository, AuthorizationService authService, ImageBuilderFactory imageBuilderFactory, ImageStorageSettings settings)
         {
             _imageRepository = imageRepository;
+            _authService = authService;
             _imageBuilderFactory = imageBuilderFactory;
             _settings = settings;
         }
@@ -34,7 +36,7 @@ namespace Image_upload_project.Controllers
         public IActionResult ImageUploadPost(ImageUploadViewModel viewModel, IFormFile file)
         {
             var fileName = Path.GetFileName(file.FileName);
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = AuthorizationUtilities.Instance.GetUserId(User);
 
             var localFolderPath = Path.Combine(_settings.ImageRepositoryPath, userId);
             if (!Directory.Exists(localFolderPath))
@@ -73,11 +75,21 @@ namespace Image_upload_project.Controllers
 
             using (var imageModel = imageBuilder.Build())
             {
+
+                if (_authService.IsImageSizeOverUserLimit(imageModel.ImageSize, User))
+                {
+                    ViewBag.Error =
+                        "There is not enough room left in your personal repository to fit an image of this size.";
+                    return View("ImageUpload", viewModel);
+                }
+                
+
                 imageModel.WriteToLocalFilePath();
-                _imageRepository.CreateNewImage(imageModel);
+                var imageId = _imageRepository.CreateNewImage(imageModel);
+                return RedirectToAction("Details",new {id = imageId});
             }
 
-            return RedirectToAction("Index","Home");
+            
         }
 
         public IActionResult Details([FromRoute] int id)
@@ -85,13 +97,9 @@ namespace Image_upload_project.Controllers
             var imageDetails = _imageRepository.GetImage(id);
             ViewBag.CanEdit = false;
             
-            var userId = User?.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!string.IsNullOrEmpty(userId))
+            if (_authService.IsUserSignedIn(User))
             {
-                if (userId == imageDetails.UserId)
-                {
-                    ViewBag.CanEdit = true;
-                }
+                ViewBag.CanEdit = _authService.CanUserEditImage(User, imageDetails.UserId);
             }
             
             return View(imageDetails);

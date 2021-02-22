@@ -19,31 +19,39 @@ namespace Image_upload_project.Repositories
         }
 
 
-        public void CreateNewImage(ImageModel image)
+        public int CreateNewImage(ImageModel image)
         {
-            //sanitize hastags - remove spaces, ensure leading hastag and add a trailing hashtag for filtering
-            image.Tags = image.Tags?.Replace(" ", "");
-            if (!string.IsNullOrEmpty(image.Tags))
-            {
-                if (image.Tags[0] != '#')
-                {
-                    image.Tags = $"#{image.Tags}";
-                }
-
-                if (image.Tags[image.Tags.Length - 1] != '#')
-                {
-                    image.Tags += "#";
-                }
-            }
+            image.Tags = SanitizeHashtags(image.Tags);
 
             using (var connection = new SqlConnection(_dbSettings.ConnectionString))
             {
                 connection.Open();
-                connection.Execute(
+                return connection.QuerySingle<int>(
                     @"INSERT INTO dbo.Image (UserId, FileName, LocalFilePath, Tags, Description, Timestamp, ImageSize)
+                    OUTPUT INSERTED.Id
                     VALUES(@UserId, @FileName, @LocalFilePath, @Tags, @Description, @Timestamp, @ImageSize)",
                     new {image.UserId, image.FileName, image.LocalFilePath, image.Tags, image.Description, image.Timestamp, image.ImageSize});
             }
+        }
+
+        private string SanitizeHashtags(string hashtags)
+        {
+            //sanitize hastags - remove spaces, ensure leading hastag and add a trailing hashtag for filtering
+            hashtags = hashtags?.Replace(" ", "");
+            if (!string.IsNullOrEmpty(hashtags))
+            {
+                if (hashtags[0] != '#')
+                {
+                    hashtags = $"#{hashtags}";
+                }
+
+                if (hashtags[hashtags.Length - 1] != '#')
+                {
+                    hashtags += "#";
+                }
+            }
+
+            return hashtags;
         }
 
         public List<ImageViewModel> GetImages(string tags = null, DateTime? dateFrom = null, DateTime? dateTo = null)

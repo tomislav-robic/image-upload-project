@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Image_upload_project.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -25,7 +26,7 @@ namespace Image_upload_project
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public static IConfiguration Configuration { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -53,9 +54,10 @@ namespace Image_upload_project
             services.AddSingleton(imageStorageSettings);
             //repositories
             services.AddScoped<IImageRepository, ImageRepository>();
-            
+            services.AddScoped<IAuthorizationRepository, AuthorizationRepository>();
             //other
             services.AddSingleton<ImageBuilderFactory>();
+            services.AddScoped<AuthorizationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

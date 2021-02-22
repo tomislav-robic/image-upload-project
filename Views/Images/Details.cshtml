@@ -36,7 +36,7 @@
             <label>Tags</label>
         </div>
         <div class="col-md-6">
-            <p>@(string.IsNullOrEmpty(Model.Tags) ? "-- none --" : Model.Tags.Substring(0, Model.Tags.Length-2).Replace("#"," #"))</p>
+            <p>@(string.IsNullOrEmpty(Model.Tags) ? "-- none --" : Model.Tags.Substring(0, Model.Tags.Length-1).Replace("#"," #").Substring(1))</p>
         </div>
     </div>
     <div class="row">
